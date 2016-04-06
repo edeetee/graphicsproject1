@@ -6,12 +6,11 @@
 //  ========================================================================
 
 #include <cmath>
-#include <GL/glew.h>
+//#include <GL/glew.h>
 #include <GL/glut.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <stdio.h>
-
 #include "loadTGA.h"
 
 #define PI 3.14159265
@@ -24,7 +23,7 @@ float aimx = 0;
 float aimy = 0;
 float aimz = 1;
 
-float move = 0;
+float movement = 0;
 
 GLuint skyleft;
 GLuint skyfront;
@@ -256,9 +255,9 @@ void drawSkybox(){
 }
 
 void updateCamera(){
-	camx += move*aimx;
-	camy += move*aimy;
-	camz += move*aimz;
+	camx += movement*aimx;
+	camy += movement*aimy;
+	camz += movement*aimz;
 }
 
 void drawPatrol(){
@@ -300,6 +299,35 @@ void drawHighSpaceship(int x, int y, float period){
 	glPopMatrix();
 }
 
+void drawRoadMarking() {
+	glColor3f(1, 1, 1);
+	glBegin(GL_QUADS);
+		glVertex3f(-0.06, 0, -0.015);
+		glVertex3f(-0.06, 0, 0.015);
+		glVertex3f(0.06, 0, 0.015);
+		glVertex3f(0.06, 0, -0.015);
+	glEnd();
+}
+
+void drawRoad() {
+	glPushMatrix();
+		glColor3f(.5, .5, .5);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, concrete);
+		glBegin(GL_QUADS);
+			glTexCoord2f(0, 0); glVertex3f(-0.5, 0, -0.5);
+			glTexCoord2f(0, 1); glVertex3f(-0.5, 0, 0.5);
+			glTexCoord2f(1, 1); glVertex3f(0.5, 0, 0.5);
+			glTexCoord2f(1, 0); glVertex3f(0.5, 0, -0.5);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);
+		glTranslatef(-0.25, 0.00001, 0);
+		drawRoadMarking();
+		glTranslatef(0.5, 0, 0);
+		drawRoadMarking();
+	glPopMatrix();
+}
+
 //--Display: ---------------------------------------------------------------
 //--This is the main display module containing function calls for generating
 //--the scene.
@@ -332,6 +360,7 @@ void display(void)
     	drawSpaceship();
 	glPopMatrix();
 
+	//flying ships
 	glPushMatrix();
 		glTranslatef(100, 10, 200);
 		drawHighSpaceship(200, 200, 2000);
@@ -348,6 +377,21 @@ void display(void)
         drawHighSpaceship(100, 100, 1000);
 	glPopMatrix();
 
+	//the road
+	glPushMatrix();
+	glTranslatef(0, -9.999, 0);
+		glScalef(10, 10, 10);
+		drawRoad();
+		glTranslatef(1, 0, 0);
+		drawRoad();
+		glTranslatef(1, 0, 0);
+		drawRoad();
+		glTranslatef(1, 0, 0);
+		drawRoad();
+		glTranslatef(1, 0, 0);
+		drawRoad();
+	glPopMatrix();
+
 	drawPatrol();
 
 	glFlush(); 
@@ -355,15 +399,17 @@ void display(void)
 	glutPostRedisplay();
 } 
 
+
+
 //for keys and stuff
 void special(int key, int x, int y)
 {
 	switch(key){
 		case GLUT_KEY_UP:
-			move = 0.1;
+			movement = 0.1;
 			break;
 		case GLUT_KEY_DOWN:
-			move = -0.1;
+			movement = -0.1;
 			break;
 		default:
 			break;
@@ -374,7 +420,7 @@ void special_up(int key, int x, int y)
 {
 	switch(key){
 		default:
-			move = 0;
+			movement = 0;
 			break;
 	}
 }
@@ -382,10 +428,10 @@ void special_up(int key, int x, int y)
 void keyboard(unsigned char key, int x, int y){
 	switch(key){
 		case 'w':
-			move = 0.1;
+			movement = 0.1;
 			break;
 		case 's':
-			move = -0.1;
+			movement = -0.1;
 			break;
 
 	}
@@ -394,7 +440,7 @@ void keyboard(unsigned char key, int x, int y){
 void keyboard_up(unsigned char key, int x, int y){
 	switch(key){
 		default:
-			move = 0;
+			movement = 0;
 	}
 }
 

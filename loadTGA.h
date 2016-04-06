@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <GL/freeglut.h>
+#include <GL/glut.h>
 using namespace std;
 
 void loadTGA(char* filename)
